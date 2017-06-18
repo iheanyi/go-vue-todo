@@ -67,12 +67,22 @@ func NewAPIService(db db.Database) *APIService {
 	}
 }
 
+func IndexHandler() func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./frontend/dist/index.html")
+	}
+
+	return http.HandlerFunc(fn)
+}
+
 func NewRouter(s *APIService) *mux.Router {
 	r := mux.NewRouter()
-	r.PathPrefix("/api/")
-	r.HandleFunc("/todos", s.ListTodos).Methods("GET")
-	r.HandleFunc("/todos", s.CreateTodo).Methods("POST")
-	//r.HandleFunc("/todos/{id}").Methods("GET", "POST")
+	api := r.PathPrefix("/api").Subrouter()
+	api.HandleFunc("/todos", s.ListTodos).Methods("GET")
+	api.HandleFunc("/todos", s.CreateTodo).Methods("POST")
+	//s.HandleFunc("/todos/{id}").Methods("GET", "POST")
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./frontend/dist/static"))))
+	r.PathPrefix("/").HandlerFunc(IndexHandler())
 	return r
 }
 
