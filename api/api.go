@@ -51,7 +51,6 @@ func (s *APIService) ListTodos(w http.ResponseWriter, r *http.Request) {
 		renderError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("listing todos: %v", todos)
 
 	todosResponse := &ListTodosResponse{
 		Todos: todos,

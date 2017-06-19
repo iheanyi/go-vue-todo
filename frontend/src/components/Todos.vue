@@ -2,8 +2,9 @@
   <div class="todos">
     <h4 v-if="isFetching">Fetching Todos</h4>
     <div class="pa4" v-else>
-        <input type="text" />
-      <ul>
+        <input @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
+        <button @click="addTodo">+</button>
+      <ul class="pt3">
         <li class="todo-item" v-for="todo in todos">
           {{ todo.description }}
         </li>
@@ -21,6 +22,7 @@ export default {
     return {
       todos: [],
       isFetching: true,
+      description: '',
     };
   },
   async created() {
@@ -31,6 +33,18 @@ export default {
       const response = await axios.get('/api/todos');
       this.todos = response.data.todos;
       this.isFetching = false;
+    },
+    async addTodo() {
+      const payload = {
+        description: this.description,
+      };
+
+      const response = await axios.post('/api/todos', payload);
+      const todo = response.data;
+      const newTodos = [todo, ...this.todos];
+
+      this.todos = newTodos;
+      this.description = '';
     },
   },
 };
