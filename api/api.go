@@ -14,8 +14,14 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 	Code  int    `json:"code"`
 }
+
 type CreateTodoRequest struct {
 	Description string `json:"description"`
+}
+
+type EditTodoRequest struct {
+	Description string `json:"description"`
+	IsCompleted bool   `json:"isCompleted"`
 }
 
 type ListTodosResponse struct {
@@ -29,19 +35,21 @@ type APIService struct {
 func (s *APIService) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var createTodo CreateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&createTodo); err != nil {
-		panic(err)
+		renderError(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
 	todo := &db.Todo{
 		Description: createTodo.Description,
 	}
 	defer r.Body.Close()
 	todo, err := s.db.CreateTodo(todo)
 	if err != nil {
-		renderError(w, err.Error(), http.StatusInternalServerError)
+		renderError(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	renderJSON(w, todo, http.StatusOK)
+	renderJSON(w, todo, http.StatusCreated)
 }
 
 func (s *APIService) ListTodos(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +67,32 @@ func (s *APIService) ListTodos(w http.ResponseWriter, r *http.Request) {
 
 	renderJSON(w, todosResponse, http.StatusOK)
 	return
+}
+
+func (s *APIService) EditTodo(w http.ResponseWriter, r *http.Request) {
+	var editTodo EditTodoRequest
+	if err := json.NewDecoder(r.Body).Decode(&editTodo); err != nil {
+		renderError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	todo := &db.Todo{
+		Description: editTodo.Description,
+		IsCompleted: editTodo.IsCompleted,
+	}
+	vars := mux.Vars(r)
+	id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		renderError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	todo, err = s.db.EditTodo(int(id), todo)
+	if err != nil {
+		renderError(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	renderJSON(w, todo, http.StatusOK)
 }
 
 func (s *APIService) DeleteTodo(w http.ResponseWriter, r *http.Request) {

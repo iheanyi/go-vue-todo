@@ -35,6 +35,35 @@ func (s *Store) CreateTodo(todo *Todo) (*Todo, error) {
 	return todo, nil
 }
 
+func (s *Store) EditTodo(id int, t *Todo) (*Todo, error) {
+	err := s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("todos"))
+
+		t.UpdatedAt = time.Now().Format(time.RFC3339)
+		buf, err := json.Marshal(t)
+		if err != nil {
+			return err
+		}
+		return b.Put(itob(id), buf)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var todo *Todo
+	err = s.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("todos"))
+		v := b.Get(itob(id))
+		if err := json.Unmarshal(v, todo); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return todo, err
+}
+
 func (s *Store) DeleteTodo(id int) error {
 	err := s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("todos"))
