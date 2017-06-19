@@ -5,7 +5,7 @@
         <input @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
         <button @click="addTodo">+</button>
       <ul class="pt3">
-        <li class="todo-item" v-for="todo in todos">
+        <li class="pv2 bv todo-item" v-for="todo in todos">
           {{ todo.description }}
         </li>
       </ul>
