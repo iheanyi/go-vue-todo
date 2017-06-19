@@ -19,7 +19,7 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.js', '.vue', '.json', '.css'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src')
@@ -35,6 +35,14 @@ module.exports = {
         options: {
           formatter: require('eslint-friendly-formatter')
         }
+      },
+      {
+        test: /\.css$/,
+        include: [
+          resolve(__dirname, "not_exist_path"),
+          resolve(__dirname, 'node_modules', 'tachyons')
+        ],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.vue$/,

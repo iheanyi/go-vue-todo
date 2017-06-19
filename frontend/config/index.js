@@ -22,9 +22,18 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report
   },
   dev: {
+    build: {
+      env: require('./dev.env'),
+      index: path.resolve(__dirname, '../dev/index.html'),
+      assetsRoot: path.resolve(__dirname, '../dev'),
+      assetsSubDirectory: 'static',
+      assetsPublicPath: '/',
+    },
     env: require('./dev.env'),
     port: 8080,
-    autoOpenBrowser: true,
+    autoOpenBrowser: false,
+    index: path.resolve(__dirname, '../dev/index.html'),
+    assetsRoot: path.resolve(__dirname, '../dev'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {},
