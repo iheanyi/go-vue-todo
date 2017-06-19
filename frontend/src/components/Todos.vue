@@ -3,17 +3,21 @@
     <h4 class="pa4" v-if="isFetching">Fetching Todos</h4>
     <div v-else>
       <div class="flex">
-        <input class="bn bb bg-near-white bw1 w-90 black bold h3 pa3" @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
+        <div class="bb b--light-gray bw1 w-100">
+          <input class="bn b--light-gray bw1 w-100 black bold h3 pa3" @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
+        </div>
         <button class="w-10 bg-navy white bn" @click="addTodo">+</button>
       </div>
-      <ul class="pa3">
-        <li class="pv2 bv todo-item" v-for="todo in todos">
-          <div>
-            {{ todo.description }}
-          </div>
-          <span>{{ todo.createdAt | datetime }}</span>
-        </li>
-      </ul>
+      <div v-if="todos.length">
+        <todo
+           v-for="todo in todos"
+           :todo="todo"
+           :key="todo.id"
+        />
+      </div>
+      <div class="ph3 pv4" v-else>
+        You haven't added any todos yet!
+      </div>
     </div>
   </div>
 </template>
