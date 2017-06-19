@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/iheanyi/go-vue-todo/db"
@@ -60,6 +61,20 @@ func (s *APIService) ListTodos(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (s *APIService) DeleteTodo(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		renderError(w, err.Error(), http.StatusInternalServerError)
+	}
+	err = s.db.DeleteTodo(int(id))
+	if err != nil {
+		renderError(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	renderJSON(w, nil, http.StatusNoContent)
+}
+
 func NewAPIService(db db.Database) *APIService {
 	return &APIService{
 		db: db,
@@ -77,9 +92,11 @@ func IndexHandler() func(w http.ResponseWriter, r *http.Request) {
 func renderJSON(w http.ResponseWriter, res interface{}, code int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		log.Printf("error encoding json: %v", err)
-		panic(err)
+	if res != nil {
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			log.Printf("error encoding json: %v", err)
+			panic(err)
+		}
 	}
 }
 

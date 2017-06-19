@@ -35,6 +35,16 @@ func (s *Store) CreateTodo(todo *Todo) (*Todo, error) {
 	return todo, nil
 }
 
+func (s *Store) DeleteTodo(id int) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("todos"))
+
+		return b.Delete(itob(id))
+	})
+
+	return err
+}
+
 func (s *Store) ListTodos() ([]*Todo, error) {
 	var todos []*Todo = make([]*Todo, 0)
 	err := s.db.View(func(tx *bolt.Tx) error {
