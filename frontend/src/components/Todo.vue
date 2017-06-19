@@ -1,5 +1,5 @@
 <template>
-  <div class="bb ph3 pv4 b--light-gray todo-item">
+  <div class="bb pa3 b--light-gray todo-item">
     <span class="b f6">{{ todo.createdAt | datetime }}</span>
     <div class="pv2">
       {{ todo.description }}

@@ -1,10 +1,10 @@
 <template>
-  <div class="w-100 w-50-ns centered todos">
+  <div class="todos">
     <h4 class="pa4" v-if="isFetching">Fetching Todos</h4>
     <div v-else>
       <div class="flex">
         <div class="bb b--light-gray bw1 w-100">
-          <input class="bn b--light-gray bw1 w-100 black bold h3 pa3" @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
+          <input class="outline-transparent bn b--light-gray bw1 w-100 black bold h3 pa3" @keyup.enter="addTodo" v-model="description" type="text" placeholder="Add Todo" />
         </div>
         <button class="w-10 bg-navy white bn" @click="addTodo">+</button>
       </div>
@@ -68,10 +68,6 @@
 </script>
 
 <style scoped>
-.todo-item {
-  list-style: none;
-}
-
 .todos {
   border-radius: 4px;
   border: 1px #eee solid;

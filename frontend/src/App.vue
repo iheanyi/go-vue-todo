@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <div id="app" class="w-100 w-50-ns center">
+    <h1>Go Vue Todo</h1>
     <router-view></router-view>
   </div>
 </template>
@@ -18,10 +19,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin-top: 60px;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
 }
 </style>
