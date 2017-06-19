@@ -1,5 +1,5 @@
 <template>
-  <div class="todos">
+  <div class="w-100 w-50-ns centered todos">
     <h4 class="pa4" v-if="isFetching">Fetching Todos</h4>
     <div v-else>
       <div class="flex">
@@ -12,6 +12,7 @@
         <todo
            v-for="todo in todos"
            :todo="todo"
+           :onRemoveClick="deleteTodo"
            :key="todo.id"
         />
       </div>
@@ -55,6 +56,13 @@
         this.todos = newTodos;
         this.description = '';
       },
+      async deleteTodo(id) {
+        await axios.delete(`/api/todos/${id}`);
+        this.todos = this.todos.filter((todo) => {
+          const todoId = todo.id;
+          return todoId !== id;
+        });
+      },
     },
   };
 </script>
@@ -67,7 +75,6 @@
 .todos {
   border-radius: 4px;
   border: 1px #eee solid;
-  width: 50%;
   margin: 0 auto;
 }
 </style>
