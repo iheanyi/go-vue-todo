@@ -41,7 +41,7 @@ export default {
 
       const response = await axios.post('/api/todos', payload);
       const todo = response.data;
-      const newTodos = [todo, ...this.todos];
+      const newTodos = [...this.todos, todo];
 
       this.todos = newTodos;
       this.description = '';
