@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/binary"
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -35,12 +36,26 @@ func (s *Store) CreateTodo(todo *Todo) (*Todo, error) {
 	return todo, nil
 }
 
-func (s *Store) EditTodo(id int, t *Todo) (*Todo, error) {
-	err := s.db.Update(func(tx *bolt.Tx) error {
+func (s *Store) UpdateTodo(id int, t *Todo) (*Todo, error) {
+	var existing Todo
+	err := s.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("todos"))
+		v := b.Get(itob(id))
+		if err := json.Unmarshal(v, &existing); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	log.Printf("Existing Todo is here: %v", existing)
+	err = s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("todos"))
 
-		t.UpdatedAt = time.Now().Format(time.RFC3339)
-		buf, err := json.Marshal(t)
+		existing.Description = t.Description
+		existing.IsCompleted = t.IsCompleted
+		existing.UpdatedAt = time.Now().Format(time.RFC3339)
+		buf, err := json.Marshal(existing)
 		if err != nil {
 			return err
 		}
@@ -50,18 +65,7 @@ func (s *Store) EditTodo(id int, t *Todo) (*Todo, error) {
 		return nil, err
 	}
 
-	var todo *Todo
-	err = s.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("todos"))
-		v := b.Get(itob(id))
-		if err := json.Unmarshal(v, todo); err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	return todo, err
+	return &existing, err
 }
 
 func (s *Store) DeleteTodo(id int) error {
