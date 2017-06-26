@@ -1,6 +1,7 @@
 <template>
   <div class="bb pa3 b--light-gray todo-item">
     <span class="b f6">{{ todo.createdAt | datetime }}</span>
+    <span class="db b f6">Last Updated: {{ todo.updatedAt | datetime }}</span>
     <div v-if="isEditing">
       <input v-focus type="text" v-model="initialTodo.description" class="outline-transparent ba mv2 b--light-gray bw1 w-100 black bold pa2" />
 
@@ -31,16 +32,20 @@
         initialTodo: {
           ...this.todo,
         },
+        cachedTodo: null,
       };
     },
     methods: {
       onEditClick() {
         this.isEditing = true;
+        this.cachedTodo = {
+          ...this.initialTodo,
+        };
       },
       onCancelClick() {
         this.isEditing = false;
         this.initialTodo = {
-          ...this.todo,
+          ...this.cachedTodo,
         };
       },
       async onSaveClick() {
