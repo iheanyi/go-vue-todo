@@ -19,7 +19,7 @@ type CreateTodoRequest struct {
 	Description string `json:"description"`
 }
 
-type EditTodoRequest struct {
+type UpdateTodoRequest struct {
 	Description string `json:"description"`
 	IsCompleted bool   `json:"isCompleted"`
 }
@@ -69,8 +69,8 @@ func (s *APIService) ListTodos(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (s *APIService) EditTodo(w http.ResponseWriter, r *http.Request) {
-	var editTodo EditTodoRequest
+func (s *APIService) UpdateTodo(w http.ResponseWriter, r *http.Request) {
+	var editTodo UpdateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&editTodo); err != nil {
 		renderError(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -86,7 +86,7 @@ func (s *APIService) EditTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err = s.db.EditTodo(int(id), todo)
+	todo, err = s.db.UpdateTodo(int(id), todo)
 	if err != nil {
 		renderError(w, err.Error(), http.StatusUnprocessableEntity)
 		return
