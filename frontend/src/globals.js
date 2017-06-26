@@ -8,3 +8,9 @@ Vue.filter('datetime', (value) => {
   const formattedDate = moment(value).format('MMMM Do YYYY, h:mm:ss a');
   return formattedDate;
 });
+
+Vue.directive('focus', {
+  inserted(el) {
+    el.focus();
+  },
+});

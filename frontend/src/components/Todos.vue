@@ -8,6 +8,11 @@
         </div>
         <button class="w-10 bg-navy white bn" @click="addTodo">+</button>
       </div>
+
+      <div class="pv2 ph3 b bb b--light-gray bw1 w-100">
+        <span> {{ todos.length }} Todos </span>
+      </div>
+
       <div v-if="todos.length">
         <todo
            v-for="todo in todos"
@@ -62,6 +67,9 @@
           const todoId = todo.id;
           return todoId !== id;
         });
+      },
+      async editTodo(id, payload) {
+        await axios.put(`/api/todos/${id}`, payload);
       },
     },
   };
